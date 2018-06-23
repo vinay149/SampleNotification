@@ -1,8 +1,10 @@
 package com.example.vinay_thakur.samplenotification;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.support.v4.app.RemoteInput;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,8 +23,10 @@ import android.os.Bundle;
 public class MainActivity extends AppCompatActivity {
 
     String ACTION_SNOOZE="action_snooz";
+    public static String key="reply_key";
 
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +44,13 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(notificationChannel);
 
         }
+        String label="reply";
+        RemoteInput remoteInput=new RemoteInput.Builder(key).setLabel(label).build();
+        Intent intent4=new Intent(this,MessageReceiver.class);
+        PendingIntent pendingIntent3=PendingIntent.getBroadcast(getApplicationContext(),123,intent4,0);
+        NotificationCompat.Action  action=new NotificationCompat.Action.Builder(R.drawable.ic_stat_name,label,pendingIntent3)
+                .addRemoteInput(remoteInput)
+                .build();
         Intent i1=new Intent(this,MainActivity.class);
         PendingIntent pendingIntent1=PendingIntent.getActivity(this,0,i1,0);
         Intent i=new Intent(this,NotificationReceiver.class);
@@ -48,13 +59,14 @@ public class MainActivity extends AppCompatActivity {
         NotificationCompat.Builder notification =new NotificationCompat.Builder(this);
         notification.setContentTitle("Sample notification");
         notification.setContentText("Hello");
-        notification.setSmallIcon(R.drawable.ic_stat_name);
+        notification.setSmallIcon(R.drawable.icon1);
         notification.setAutoCancel(true);
         notification.setLargeIcon(bitmap);
         notification.setStyle(new NotificationCompat.BigPictureStyle().bigPicture(bitmap)).build();
         //notification.setStyle(new NotificationCompat.BigPictureStyle().bigLargeIcon(null)).build();
         //notification.setStyle(new NotificationCompat.BigTextStyle().bigText("hey my name is vinay  kumar yadav  as i professional i am a software engineer hey my name is vinay  kumar yadav  as i professional i am a software engineer hey my name is vinay  kumar yadav  as i professional i am a software engineer")).build();
-        notification.addAction(R.drawable.ic_stat_name,"snooz",pendingIntent);
+        notification.addAction(R.drawable.icon1,"snooz",pendingIntent);
+        notification.addAction(action);
         notification.setContentIntent(pendingIntent);
         NotificationManagerCompat notificationManager=NotificationManagerCompat.from(this);
         notificationManager.notify(123,notification.build());
